@@ -12,6 +12,7 @@ import (
 func InitRouter() {
 	r := gin.Default()
 	r.GET("/comments", ListAllComments)
+	r.GET("/comments/:commentId", GetCommentByCommentId)
 	r.Run(":" + config.Configuration.Port)
 }
 
