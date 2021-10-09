@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"github.com/6156-DonaldDuck/comments/pkg/router"
+)
 
 func main() {
-	fmt.Println("Hello")
+	router.InitRouter()
 }
