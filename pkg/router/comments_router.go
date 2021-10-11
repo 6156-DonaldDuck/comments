@@ -1,7 +1,9 @@
 package router
 
 import (
+	"fmt"
 	"github.com/6156-DonaldDuck/comments/pkg/config"
+	"github.com/6156-DonaldDuck/comments/pkg/model"
 	"github.com/6156-DonaldDuck/comments/pkg/service"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -11,8 +13,11 @@ import (
 
 func InitRouter() {
 	r := gin.Default()
-	r.GET("/comments", ListAllComments)
-	r.GET("/comments/:commentId", GetCommentByCommentId)
+	r.GET("/api/comments", ListAllComments)
+	r.GET("/api/comments/:commentId", GetCommentByCommentId)
+	r.POST("/api/comments", CreateComment)
+	r.PUT("/api/comments/:commentId", UpdateCommentById)
+	r.DELETE("/api/comments/:commentId", DeleteCommentById)
 	r.Run(":" + config.Configuration.Port)
 }
 
@@ -38,5 +43,56 @@ func GetCommentByCommentId(c *gin.Context) {
 		c.Error(err)
 	} else {
 		c.JSON(http.StatusOK, comment)
+	}
+}
+
+func CreateComment(c *gin.Context) {
+	comment := model.Comment{}
+	if err := c.ShouldBind(&comment); err != nil {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("invalid comment, err=%v", err))
+		return
+	}
+	if err := service.CreateComment(comment); err != nil {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("error occurred while creating comment, err=%v", err))
+	} else {
+		c.JSON(http.StatusCreated, "success")
+	}
+}
+
+func UpdateCommentById(c *gin.Context) {
+	commentIdStr := c.Param("commentId")
+	commentId, err := strconv.Atoi(commentIdStr)
+	if err != nil {
+		log.Errorf("[router.UpdateCommentById] failed to parse comment id %v, err=%v\n", commentIdStr, err)
+		c.JSON(http.StatusBadRequest, "invalid comment id")
+		return
+	}
+	comment := model.Comment{}
+	if err := c.ShouldBind(&comment); err != nil {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("invalid comment, err=%v", err))
+		return
+	}
+	if comment.ID == 0 {
+		comment.ID = uint(commentId)
+	}
+	if err := service.UpdateComment(comment); err != nil {
+		c.JSON(http.StatusBadRequest, fmt.Sprintf("error occurred while updating comment, err=%v", err))
+	} else {
+		c.JSON(http.StatusOK, "success")
+	}
+}
+
+func DeleteCommentById(c *gin.Context) {
+	commentIdStr := c.Param("commentId")
+	commentId, err := strconv.Atoi(commentIdStr)
+	if err != nil {
+		log.Errorf("[router.DeleteCommentById] failed to parse comment id %v, err=%v\n", commentIdStr, err)
+		c.JSON(http.StatusBadRequest, "invalid comment id")
+		return
+	}
+	if err := service.DeleteCommentById(uint(commentId)); err != nil {
+		c.JSON(http.StatusInternalServerError, fmt.Sprintf("error occurred while deleting comment, err=%v", err))
+	} else {
+		c.JSON(http.StatusOK, "success")
 	}
 }
