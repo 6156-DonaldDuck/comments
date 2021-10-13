@@ -93,6 +93,6 @@ func DeleteCommentById(c *gin.Context) {
 	if err := service.DeleteCommentById(uint(commentId)); err != nil {
 		c.JSON(http.StatusInternalServerError, fmt.Sprintf("error occurred while deleting comment, err=%v", err))
 	} else {
-		c.JSON(http.StatusOK, "success")
+		c.JSON(http.StatusOK, commentId)
 	}
 }
