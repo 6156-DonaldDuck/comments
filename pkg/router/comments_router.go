@@ -52,10 +52,10 @@ func CreateComment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, fmt.Sprintf("invalid comment, err=%v", err))
 		return
 	}
-	if err := service.CreateComment(comment); err != nil {
+	if id, err := service.CreateComment(comment); err != nil {
 		c.JSON(http.StatusBadRequest, fmt.Sprintf("error occurred while creating comment, err=%v", err))
 	} else {
-		c.JSON(http.StatusCreated, "success")
+		c.JSON(http.StatusCreated, id)
 	}
 }
 
@@ -75,10 +75,10 @@ func UpdateCommentById(c *gin.Context) {
 	if comment.ID == 0 {
 		comment.ID = uint(commentId)
 	}
-	if err := service.UpdateComment(comment); err != nil {
+	if id, err := service.UpdateComment(comment); err != nil {
 		c.JSON(http.StatusBadRequest, fmt.Sprintf("error occurred while updating comment, err=%v", err))
 	} else {
-		c.JSON(http.StatusOK, "success")
+		c.JSON(http.StatusOK, id)
 	}
 }
 

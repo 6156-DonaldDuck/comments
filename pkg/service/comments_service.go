@@ -29,28 +29,28 @@ func GetCommentByCommentId(commentId uint) (model.Comment, error) {
 	return comment, result.Error
 }
 
-func CreateComment(comment model.Comment) error {
+func CreateComment(comment model.Comment) (uint, error) {
 	result := db.DbConn.Create(&comment)
 	if result.Error != nil {
 		log.Errorf("[service.CreateComment] error occurred while creating comment, err=%v\n", result.Error)
-		return result.Error
+		return 0, result.Error
 	}
 	log.Infof("[service.CreateComment] successfully created the comment with id=%v\n", comment.ID)
-	return nil
+	return comment.ID, nil
 }
 
-func UpdateComment(comment model.Comment) error {
+func UpdateComment(comment model.Comment) (uint, error) {
 	if comment.ID == 0 {
 		err := fmt.Errorf("[service.UpdateComment] comment id cannot be 0")
-		return err
+		return 0, err
 	}
 	result := db.DbConn.Model(&comment).Updates(comment)
 	if result.Error != nil {
 		log.Errorf("[service.UpdateComment] error occurred while updating comment %v, err=%v\n", comment.ID, result.Error)
-		return result.Error
+		return 0, result.Error
 	}
 	log.Infof("[service.UpdateComment] successfully updated the comment with id=%v\n", comment.ID)
-	return nil
+	return comment.ID, nil
 }
 
 func DeleteCommentById(commentId uint) error {
