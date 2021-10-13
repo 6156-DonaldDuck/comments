@@ -13,11 +13,11 @@ import (
 
 func InitRouter() {
 	r := gin.Default()
-	r.GET("/api/comments", ListAllComments)
-	r.GET("/api/comments/:commentId", GetCommentByCommentId)
-	r.POST("/api/comments", CreateComment)
-	r.PUT("/api/comments/:commentId", UpdateCommentById)
-	r.DELETE("/api/comments/:commentId", DeleteCommentById)
+	r.GET("/api/v1/comments", ListAllComments)
+	r.GET("/api/v1/comments/:commentId", GetCommentByCommentId)
+	r.POST("/api/v1/comments", CreateComment)
+	r.PUT("/api/v1/comments/:commentId", UpdateCommentById)
+	r.DELETE("/api/v1/comments/:commentId", DeleteCommentById)
 	r.Run(":" + config.Configuration.Port)
 }
 
