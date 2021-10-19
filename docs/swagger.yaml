@@ -1,0 +1,96 @@
+info:
+  contact: {}
+paths:
+  /comments:
+    get:
+      consumes:
+      - application/json
+      description: List all comments of all articles and all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "500":
+          description: Internal Server Error
+          schema:
+            type: Internal
+      summary: List All Comments
+      tags:
+      - Comments
+    post:
+      consumes:
+      - application/json
+      description: Create a new comment
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: invalid
+      summary: Create Comment
+      tags:
+      - Comments
+  /comments/{commentId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a existing comment
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: invalid
+      summary: Delete an Existing Comment
+      tags:
+      - Comments
+    get:
+      consumes:
+      - application/json
+      description: Get a specific comment by the given ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: invalid
+      summary: Get Comment By Comment ID
+      tags:
+      - Comments
+    put:
+      consumes:
+      - application/json
+      description: Update a existing comment
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: json
+        "400":
+          description: Bad Request
+          schema:
+            type: invalid
+      summary: Update an Existing Comment
+      tags:
+      - Comments
+swagger: "2.0"

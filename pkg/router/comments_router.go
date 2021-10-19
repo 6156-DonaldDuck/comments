@@ -2,6 +2,9 @@ package router
 
 import (
 	"fmt"
+	docs "github.com/6156-DonaldDuck/comments/docs"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/6156-DonaldDuck/comments/pkg/config"
 	"github.com/6156-DonaldDuck/comments/pkg/model"
 	"github.com/6156-DonaldDuck/comments/pkg/service"
@@ -13,14 +16,28 @@ import (
 
 func InitRouter() {
 	r := gin.Default()
+	docs.SwaggerInfo.BasePath = "/api/v1"
 	r.GET("/api/v1/comments", ListAllComments)
 	r.GET("/api/v1/comments/:commentId", GetCommentByCommentId)
 	r.POST("/api/v1/comments", CreateComment)
 	r.PUT("/api/v1/comments/:commentId", UpdateCommentById)
 	r.DELETE("/api/v1/comments/:commentId", DeleteCommentById)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.Run(":" + config.Configuration.Port)
 }
 
+// @BasePath /api/v1
+
+// ListAllComments godoc
+// @Summary List All Comments
+// @Schemes
+// @Description List all comments of all articles and all users
+// @Tags Comments
+// @Accept json
+// @Produce json
+// @Success 200 {json} Comments
+// @Failure 500 Internal error
+// @Router /comments [get]
 func ListAllComments(c *gin.Context) {
 	comments, err := service.ListAllComments()
 	if err != nil {
@@ -30,6 +47,18 @@ func ListAllComments(c *gin.Context) {
 	}
 }
 
+// @BasePath /api/v1
+
+// GetCommentByCommentId godoc
+// @Summary Get Comment By Comment ID
+// @Schemes
+// @Description Get a specific comment by the given ID
+// @Tags Comments
+// @Accept json
+// @Produce json
+// @Success 200 {json} Comment
+// @Failure 400 invalid comment id
+// @Router /comments/{commentId} [get]
 func GetCommentByCommentId(c *gin.Context) {
 	commentIdStr := c.Param("commentId")
 	commentId, err := strconv.Atoi(commentIdStr)
@@ -46,6 +75,18 @@ func GetCommentByCommentId(c *gin.Context) {
 	}
 }
 
+// @BasePath /api/v1
+
+// CreateComment godoc
+// @Summary Create Comment
+// @Schemes
+// @Description Create a new comment
+// @Tags Comments
+// @Accept json
+// @Produce json
+// @Success 201 {json} Comment
+// @Failure 400 invalid comment
+// @Router /comments [post]
 func CreateComment(c *gin.Context) {
 	comment := model.Comment{}
 	if err := c.ShouldBind(&comment); err != nil {
@@ -59,6 +100,18 @@ func CreateComment(c *gin.Context) {
 	}
 }
 
+// @BasePath /api/v1
+
+// UpdateCommentById godoc
+// @Summary Update an Existing Comment
+// @Schemes
+// @Description Update a existing comment
+// @Tags Comments
+// @Accept json
+// @Produce json
+// @Success 200 {json} Comment
+// @Failure 400 invalid comment
+// @Router /comments/{commentId} [put]
 func UpdateCommentById(c *gin.Context) {
 	commentIdStr := c.Param("commentId")
 	commentId, err := strconv.Atoi(commentIdStr)
@@ -82,6 +135,18 @@ func UpdateCommentById(c *gin.Context) {
 	}
 }
 
+// @BasePath /api/v1
+
+// DeleteCommentById godoc
+// @Summary Delete an Existing Comment
+// @Schemes
+// @Description Delete a existing comment
+// @Tags Comments
+// @Accept json
+// @Produce json
+// @Success 200 {json} Comment
+// @Failure 400 invalid comment
+// @Router /comments/{commentId} [delete]
 func DeleteCommentById(c *gin.Context) {
 	commentIdStr := c.Param("commentId")
 	commentId, err := strconv.Atoi(commentIdStr)
