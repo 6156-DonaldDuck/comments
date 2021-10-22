@@ -3,19 +3,21 @@ package router
 import (
 	"fmt"
 	docs "github.com/6156-DonaldDuck/comments/docs"
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/6156-DonaldDuck/comments/pkg/config"
 	"github.com/6156-DonaldDuck/comments/pkg/model"
 	"github.com/6156-DonaldDuck/comments/pkg/service"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 	"strconv"
 )
 
 func InitRouter() {
 	r := gin.Default()
+	r.Use(cors.Default()) // default allows all origin
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	r.GET("/api/v1/comments", ListAllComments)
 	r.GET("/api/v1/comments/:commentId", GetCommentByCommentId)
