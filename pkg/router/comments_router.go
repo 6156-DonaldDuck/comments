@@ -1,10 +1,12 @@
 package router
 
 import (
+	"errors"
 	"github.com/6156-DonaldDuck/comments/pkg/config"
 	"github.com/6156-DonaldDuck/comments/pkg/service"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 )
@@ -17,7 +19,22 @@ func InitRouter() {
 }
 
 func ListAllComments(c *gin.Context) {
-	comments, err := service.ListAllComments()
+	offsetStr := c.Param("offset")
+	limitStr := c.Param("limit")
+	offset, errOffset := strconv.Atoi(offsetStr)
+	limit, errLimit := strconv.Atoi(limitStr)
+	if errOffset != nil {
+		log.Errorf("[router.ListAllComments] failed to parse offset %v, err=%v\n", offsetStr, errOffset)
+		c.JSON(http.StatusBadRequest, "invalid offset")
+		return
+	}
+	if errLimit != nil {
+		log.Errorf("[router.ListAllComments] failed to parse limit %v, err=%v\n", limitStr, errLimit)
+		c.JSON(http.StatusBadRequest, "invalid limit")
+		return
+	}
+
+	comments, err := service.ListAllComments(offset, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "internal server error")
 	} else {
@@ -35,8 +52,12 @@ func GetCommentByCommentId(c *gin.Context) {
 	}
 	comment, err := service.GetCommentByCommentId(uint(commentId))
 	if err != nil {
-		c.Error(err)
-	} else {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, err.Error())
+		} else {
+			c.Error(err)
+		}
+	} else{
 		c.JSON(http.StatusOK, comment)
 	}
 }
