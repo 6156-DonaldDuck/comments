@@ -6,9 +6,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func ListAllComments() ([]model.Comment, error) {
+func ListAllComments(offset int, limit int) ([]model.Comment, error) {
 	var comments []model.Comment
-	result := db.DbConn.Find(&comments)
+	result := db.DbConn.Limit(limit).Offset(offset).Find(&comments)
 	if result.Error != nil {
 		log.Errorf("[service.ListAllComments] error occurred while listing comments, err=%v\n", result.Error)
 	} else {
