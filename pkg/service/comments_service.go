@@ -22,9 +22,9 @@ func GetCommentByCommentId(commentId uint) (model.Comment, error) {
 	comment := model.Comment{}
 	result := db.DbConn.First(&comment, commentId)
 	if result.Error != nil {
-		log.Errorf("[service.ListAllComments] error occurred while getting comment with id %v, err=%v\n", commentId, result.Error)
+		log.Errorf("[service.GetCommentByCommentId] error occurred while getting comment with id %v, err=%v\n", commentId, result.Error)
 	} else {
-		log.Infof("[service.ListAllComments] successfully got comment with id %v, rows affected=%v\n", commentId, result.RowsAffected)
+		log.Infof("[service.GetCommentByCommentId] successfully got comment with id %v, rows affected=%v\n", commentId, result.RowsAffected)
 	}
 	return comment, result.Error
 }
