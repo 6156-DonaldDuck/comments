@@ -7,9 +7,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func ListAllComments() ([]model.Comment, error) {
+func ListAllComments(articleId uint) ([]model.Comment, error) {
 	var comments []model.Comment
-	result := db.DbConn.Find(&comments)
+	dbConn := db.DbConn
+	if articleId != 0 {
+		dbConn = dbConn.Where("article_id = ?", articleId)
+	}
+
+	result := dbConn.Find(&comments)
 	if result.Error != nil {
 		log.Errorf("[service.ListAllComments] error occurred while listing comments, err=%v\n", result.Error)
 	} else {

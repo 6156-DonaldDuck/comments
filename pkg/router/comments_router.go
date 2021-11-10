@@ -41,7 +41,16 @@ func InitRouter() {
 // @Failure 500 Internal error
 // @Router /comments [get]
 func ListAllComments(c *gin.Context) {
-	comments, err := service.ListAllComments()
+	articleIdStr := c.DefaultQuery("article_id", "0")
+
+	articleId, err := strconv.Atoi(articleIdStr)
+	if err != nil {
+		log.Errorf("[router.ListAllComments] failed to parse articleId %v, err=%v\n", articleIdStr, err)
+		c.JSON(http.StatusBadRequest, "invalid articleId")
+		return
+	}
+
+	comments, err := service.ListAllComments(uint(articleId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "internal server error")
 	} else {
