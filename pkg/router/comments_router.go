@@ -1,6 +1,7 @@
 package router
 
 import (
+	"errors"
 	"fmt"
 	docs "github.com/6156-DonaldDuck/comments/docs"
 	"github.com/6156-DonaldDuck/comments/pkg/config"
@@ -11,6 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 )
@@ -42,7 +44,6 @@ func InitRouter() {
 // @Router /comments [get]
 func ListAllComments(c *gin.Context) {
 	articleIdStr := c.DefaultQuery("article_id", "0")
-
 	articleId, err := strconv.Atoi(articleIdStr)
 	if err != nil {
 		log.Errorf("[router.ListAllComments] failed to parse articleId %v, err=%v\n", articleIdStr, err)
@@ -50,7 +51,7 @@ func ListAllComments(c *gin.Context) {
 		return
 	}
 
-	comments, err := service.ListAllComments(uint(articleId))
+	comments, err := service.ListAllComments(articleId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "internal server error")
 	} else {
@@ -80,8 +81,12 @@ func GetCommentByCommentId(c *gin.Context) {
 	}
 	comment, err := service.GetCommentByCommentId(uint(commentId))
 	if err != nil {
-		c.Error(err)
-	} else {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, err.Error())
+		} else {
+			c.Error(err)
+		}
+	} else{
 		c.JSON(http.StatusOK, comment)
 	}
 }

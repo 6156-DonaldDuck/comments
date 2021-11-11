@@ -7,9 +7,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func ListAllComments(articleId uint) ([]model.Comment, error) {
+func ListAllComments(articleId int) ([]model.Comment, error) {
 	var comments []model.Comment
 	dbConn := db.DbConn
+
+	// filter by article id
 	if articleId != 0 {
 		dbConn = dbConn.Where("article_id = ?", articleId)
 	}
@@ -29,7 +31,7 @@ func GetCommentByCommentId(commentId uint) (model.Comment, error) {
 	if result.Error != nil {
 		log.Errorf("[service.GetCommentByCommentId] error occurred while getting comment with id %v, err=%v\n", commentId, result.Error)
 	} else {
-		log.Infof("[service.GetCommentByCommentId] successfully got comment with id %v, rows affected=%v\n", commentId, result.RowsAffected)
+		log.Infof("[service.GetCommentByCommentId] successfully got comment with id %v, rows affected = %v\n", commentId, result.RowsAffected)
 	}
 	return comment, result.Error
 }
