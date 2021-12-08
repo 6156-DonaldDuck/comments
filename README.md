@@ -7,7 +7,7 @@ This is the comments micro-service of the TwoPointThreeAcres.com project.
 To build the Docker image:
 
 ```shell
-yukiasuna/2point3acres-comments-service
+docker build . -t yukiasuna/2point3acres-comments-service
 ```
 
 To push the Docker image:
